@@ -1,0 +1,1 @@
+# plugins-ultimate-responsive-image-slider
