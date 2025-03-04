@@ -2,8 +2,8 @@
 Contributors: FARAZFRANK 
 Tags: slider, best slider plugin, image slide show, responsive slider, wordpress image slider plugin
 Requires at least: 4.0
-Tested up to: 6.6.1
-Stable tag: 3.5.15
+Tested up to: 6.7.2
+Stable tag: 3.5.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -188,6 +188,11 @@ Please use WordPress [support forum](http://wordpress.org/support/plugin/ultimat
 
 == Changelog ==
 
+= 3.5.16 =
+* Dashboard XSS stored vulnerability fixed
+* Title and description position moved to bottom
+* Frontend plugin scripts loaded properly
+
 = 3.5.15 =
 * Blank slider post fatal error fixed
 * All plugin code security updated by adding proper sanitizing and escaping functions
@@ -203,7 +208,7 @@ Please use WordPress [support forum](http://wordpress.org/support/plugin/ultimat
 = 3.5.12 =
 * WPScan Vulnerability report fixed
 * Clone slider feature finalized
-* Slide ID displaed for Slide Sorting features
+* Slide ID displayed for Slide Sorting features
 
 = 3.5.11 =
 * Regular update and maintenance 
