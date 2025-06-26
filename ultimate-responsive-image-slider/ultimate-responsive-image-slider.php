@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * Plugin Name:       Ultimate Responsive Image Slider
  * Plugin URI:        http://wpfrank.com/
  * Description:	  Add unlimited image slides using Ultimate Responsive Image Slider in any Page and Post content to give an attractive mode to represent contents.
- * Version:           3.5.17
+ * Version:           3.5.18
  * Requires at least: 4.0
  * Requires PHP:      7.0
  * Author:            FARAZFRANK
@@ -30,7 +30,7 @@ along with Ultimate Responsive Image Slider. If not, see http://www.gnu.org/lice
 
 //Constant Variable
 define("URIS_PLUGIN_URL", plugin_dir_url(__FILE__));
-define("URIS_PLUGIN_VER", '3.5.17');
+define("URIS_PLUGIN_VER", '3.5.18');
 
 // Apply default settings on activation
 register_activation_hook( __FILE__, 'WRIS_DefaultSettingsPro' );
@@ -137,38 +137,49 @@ class URIS {
 	
 	//Clone slider call back
 	public function uris_clone_slider() {
+		
 		if ( current_user_can( 'manage_options' ) ) {
-			if ( isset( $_POST['uris_clone_nonce'] ) && wp_verify_nonce( wp_unslash ( $_POST['uris_clone_nonce'], 'uris_clone_nonce' ) ) ) {
-				$ursi_clone_post_id = sanitize_text_field( wp_unslash( $_POST['ursi_clone_post_id'] ) );
-				// get all required data for cloning
-				$post_title = get_the_title($ursi_clone_post_id)." - Clone";
-				$post_type = sanitize_text_field("ris_gallery");
-				$post_status = sanitize_text_field("publish");
-				// get all slide ids for cloning
-				$URIS_All_Slide_Ids = get_post_meta( $ursi_clone_post_id, 'ris_all_photos_details', true);
-				
-				// get slider post meta settings for cloning
-				$WRIS_Gallery_Settings_Key = sanitize_text_field("WRIS_Gallery_Settings_".$ursi_clone_post_id);
-				$WRIS_Gallery_Settings = get_post_meta( $ursi_clone_post_id, $WRIS_Gallery_Settings_Key, true);
-				
-				//cloning post
-				$uris_cloning_post_array =  array(
-					'post_title' => $post_title,
-					'post_type' => $post_type,
-					'post_status' => $post_status,
-					'meta_input' => array(
-						// post meta key => value
-						'ris_all_photos_details' => $URIS_All_Slide_Ids,
-					),
-				);
-				
-				$cloned_post_id = wp_insert_post($uris_cloning_post_array);
-				// slider post meta settings cloning
-				add_post_meta( $cloned_post_id, "WRIS_Gallery_Settings_".$cloned_post_id, $WRIS_Gallery_Settings);
-				die;
-			} else {
-				die;
-			}
+		    if ( isset( $_POST['uris_clone_nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['uris_clone_nonce'] ), 'uris_clone_nonce' ) ) {
+			   $ursi_clone_post_id = sanitize_text_field( wp_unslash( $_POST['ursi_clone_post_id'] ) );
+
+			   // Validate post ID
+			   if ( !get_post_status( $ursi_clone_post_id ) || get_post_type( $ursi_clone_post_id ) !== 'ris_gallery' ) {
+				  wp_die( 'Invalid post ID or type' );
+			   }
+
+			   // Get and set data
+			   $post_title = get_the_title( $ursi_clone_post_id ) . " - Clone";
+			   $post_type = 'ris_gallery';
+			   $post_status = 'publish';
+
+			   // Get slide details and settings
+			   $post_post_meta = get_post_meta( $ursi_clone_post_id, 'ris_all_photos_details', true );
+			   $WRIS_Gallery_Settings_Key = "WRIS_Gallery_Settings_" . $ursi_clone_post_id;
+			   $post_post_settings = get_post_meta( $ursi_clone_post_id, $WRIS_Gallery_Settings_Key, true );
+
+			   // Prepare cloning array
+			   $uris_cloning_post_array = array(
+				  'post_title' => $post_title,
+				  'post_type' => $post_type,
+				  'post_status' => $post_status,
+				  'meta_input' => array(
+					 'ris_all_photos_details' => $post_post_meta,
+				  ),
+			   );
+
+			   // Insert cloned post and check for errors
+			   $cloned_post_id = wp_insert_post( $uris_cloning_post_array );
+			   if ( is_wp_error( $cloned_post_id ) || $cloned_post_id === 0 ) {
+				  wp_die( 'Error cloning post: ' . ( is_wp_error( $cloned_post_id ) ? $cloned_post_id->get_error_message() : 'Unknown error' ) );
+			   }
+
+			   // Add settings meta
+			   add_post_meta( $cloned_post_id, "WRIS_Gallery_Settings_" . $cloned_post_id, $post_post_settings );
+
+			   // Return success response
+			   wp_send_json_success( array( 'cloned_post_id' => $cloned_post_id ) );
+		    }
+		    wp_die( 'Nonce verification failed' );
 		}
 	}
 	
