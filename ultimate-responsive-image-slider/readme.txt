@@ -3,7 +3,7 @@ Contributors: awordpresslife, razipathhan, hanif0991, muhammadshahid, fkfaisalkh
 Author: FARAZFRANK
 Tags: slider, image slider, responsive slider, photo gallery, carousel
 Requires at least: 4.0
-Tested up to: 6.9
+Tested up to: 7.0.3
 Requires PHP: 7.0
 Stable tag: 3.5.19
 License: GPLv2 or later
